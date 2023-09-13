@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>leaflet_map</title>
+    <script src="index.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+
+    <style>
+      #map {
+        height: 100vh;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+  </body>
+</html>
+
+<script>
+  var map = L.map("map").setView([-0.1610493679117866, 36.74269227363476], 13);
+
+  // !-- OSM layer -->
+
+  var osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  });
+  osm.addTo(map);
+
+  //   Adding a marker to the map layer
+  var singleMarker = L.marker([-0.1610493679117866, 36.74269227363476]);
+  singleMarker.addTo(map);
+  var popup = singleMarker.bindPopup("This ia a pop up");
+  popup.addTo(map);
+
+  //   using a different map tile layer
+  var CartoDB_DarkMatter = L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 20,
+    }
+  );
+  CartoDB_DarkMatter.addTo(map);
+
+  // TopoMap Layer
+  var OpenTopoMap = L.tileLayer(
+    "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+    {
+      maxZoom: 17,
+      attribution:
+        'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+    }
+  );
+  OpenTopoMap.addTo(map);
+
+  //   Google Maps Layer
+  googleStreets = L.tileLayer(
+    "http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}",
+    {
+      maxZoom: 20,
+      subdomains: ["mt0", "mt1", "mt2", "mt3"],
+    }
+  );
+  googleStreets.addTo(map);
+
+  //   Satellite layer
+  googleSat = L.tileLayer("http://{s}.google.com/vt?lyrs=s&x={x}&y={y}&z={z}", {
+    maxZoom: 20,
+    subdomains: ["mt0", "mt1", "mt2", "mt3"],
+  });
+  googleSat.add(map);
+
+  // Layer grouping and Control
+  var baseLayers = {
+    OpenStreetMap: osm,
+    "Google Map": googleStreets,
+    Satellite: googleSat,
+    "Dark Marker": CartoDB_DarkMatter,
+    "Topo Map": OpenTopoMap,
+  };
+
+  var overlays = {
+    Marker: singleMarker,
+  };
+
+  L.control.layers(baseLayers, overlays).addTo(map);
+
+  //   Using GEOJSON
+
+  L.geoJSON(lineJSON).addTo(map);
+  L.geoJSON(pointJSON).addTo(map);
+  L.geoJSON(polygonJSON).addTo(map);
+</script>
